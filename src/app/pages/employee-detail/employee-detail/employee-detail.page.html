@@ -1,0 +1,47 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{employee.employee_name}}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-card>
+    <ion-card-content>
+      <ion-grid>
+      <ion-row> <ion-col col-4>
+        <ion-img></ion-img>
+      </ion-col></ion-row>
+      <ion-row> <ion-col col-4>
+        <ion-item lines="none">
+          {{'ID'}}:{{employee.id}}
+        </ion-item>
+
+      </ion-col></ion-row>
+      <ion-row> <ion-col col-4>
+        <ion-item lines="none">
+          {{'Salary'}}:{{employee.employee_salary}}
+        </ion-item>
+
+      </ion-col></ion-row>
+      <ion-row> <ion-col col-4>
+        <ion-item lines="none">
+          {{'Age'}}:{{employee.employee_age}}
+        </ion-item>
+
+      </ion-col></ion-row>
+    </ion-grid>
+
+      <ion-card-subtitle>
+
+      </ion-card-subtitle>
+      <ion-buttons slot="primary">
+        <ion-button routerLink="/edit/{{classroom}}">
+          <ion-icon slot="icon-only" name="create"></ion-icon>
+        </ion-button>
+        <ion-button (click)="delete(employee)">
+          <ion-icon slot="icon-only" name="remove-circle"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

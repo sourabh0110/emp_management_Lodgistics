@@ -1,0 +1,7 @@
+{
+  "name": "Employee Management",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "angular"
+}
