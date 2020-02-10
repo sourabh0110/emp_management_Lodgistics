@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { HttpService } from "../../../services/http-service/http.service";
 import { IonicModelsService } from "src/app/services/ionic-models/ionic-models.service";
 import { Router, NavigationExtras } from "@angular/router";
+import { OfflineService } from 'src/app/services/offline-service/offline.service';
 
 @Component({
   selector: "app-employee-list",
@@ -12,21 +13,30 @@ export class EmployeeListPage implements OnInit {
   employees: any = [];
   employeeList:any=[];
   constructor(
+    private offlineService:OfflineService,
     private router: Router,
     private restApiService: HttpService,
     private ionicModels: IonicModelsService
   ) {}
 
   ngOnInit() {
-    this.getClassrooms();
+    this.offlineService.getValues('emp').then(res=>{
+      this.employees=this.employeeList=res;
+    },
+    err=> {
+       this.getEmpList();
+    }
+    )
+    
   }
 
-  async getClassrooms() {
+  async getEmpList() {
     this.ionicModels.showLoader("Loading..");
     await this.restApiService.getClassroom().subscribe(
       res => {
         console.log(res);
         this.employees= this.employeeList = res.data;
+        this.offlineService.setValues('emp',this.employees);
         this.ionicModels.hideLoader();
       },
       err => {
@@ -63,7 +73,6 @@ export class EmployeeListPage implements OnInit {
       return;
     }
     this.employees=this.employees.filter(res=>{
-      console.log(res);
       return res.employee_name.toLowerCase().includes(text);
     })
     console.log(this.employees);

@@ -8,8 +8,9 @@
   <ion-card>
     <ion-card-content>
       <ion-grid>
-      <ion-row> <ion-col col-4>
-        <ion-img></ion-img>
+      <ion-row class="card-row"> <ion-col col-4>
+        <!-- <ion-icon *ngIf="employee.profile_image" class="card-image"></ion-icon>        
+        <img *ngIf="!employee.profile_image" src="employee-management/src/assets/icon/favicon.png" class="card-image" /> -->
       </ion-col></ion-row>
       <ion-row> <ion-col col-4>
         <ion-item lines="none">
@@ -30,18 +31,6 @@
 
       </ion-col></ion-row>
     </ion-grid>
-
-      <ion-card-subtitle>
-
-      </ion-card-subtitle>
-      <ion-buttons slot="primary">
-        <ion-button routerLink="/edit/{{classroom}}">
-          <ion-icon slot="icon-only" name="create"></ion-icon>
-        </ion-button>
-        <ion-button (click)="delete(employee)">
-          <ion-icon slot="icon-only" name="remove-circle"></ion-icon>
-        </ion-button>
-      </ion-buttons>
     </ion-card-content>
   </ion-card>
 </ion-content>

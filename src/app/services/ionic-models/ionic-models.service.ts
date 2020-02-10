@@ -25,8 +25,8 @@ export class IonicModelsService {
   async presentAlertConfirm() {
     return new Promise( async (resolve,reject)=>{
       const alert = await this.alertController.create({
-        header: 'Confirm!',
-        message: 'Message <strong>text</strong>!!!',
+        header: 'Delete Record!',
+        message: '<strong> Are you sure?</strong>',
         buttons: [
           {
             text: 'Cancel',
