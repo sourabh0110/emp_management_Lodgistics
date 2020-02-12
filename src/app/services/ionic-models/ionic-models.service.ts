@@ -9,21 +9,28 @@ import { AppConfig } from '../app-config';
 export class IonicModelsService {
 
   constructor(private platform:Platform, private nativeService:NativeServiceService, private loadingController:LoadingController,private alertController:AlertController,private actionSheetController:ActionSheetController ) { }
-
+  /**
+   * To show loader
+   * @param message Message to show
+   */
   async showLoader(message){
     const loading = await this.loadingController.create({
       message: message
     });
     await loading.present();
   }
-
+  /**
+   * To hide loader
+   */
   async hideLoader(){
     setTimeout(async ()=>{
       await this.loadingController.dismiss();
     },500)
     
   }
-
+  /**
+   * To show alert confirm
+   */
   async presentAlertConfirm() {
     return new Promise( async (resolve,reject)=>{
       const alert = await this.alertController.create({
@@ -52,6 +59,12 @@ export class IonicModelsService {
     })
    
   }
+  /**
+   * To show Alert
+   * @param title Title
+   * @param msg Message
+   * @param buttonTitle Button Text 
+   */
   showAlert(title: string, msg: string, buttonTitle: any) {
     return new Promise(async (resolve, reject) => {
       const alert = await this.alertController.create({
@@ -70,7 +83,9 @@ export class IonicModelsService {
       alert.present();
     })
   }
-
+    /**
+     * To select type of image (click/gallery)
+     */
    selectImage() {
     return new Promise(async(resolve,reject)=>{
       let cameraProperties = AppConfig.cameraProperties;
@@ -84,7 +99,7 @@ export class IonicModelsService {
       const actionSheet = await this.actionSheetController.create({
         header: "Select Image source",
         buttons: [{
-          text: 'Load from Library',
+          text: 'Use Camera',
           handler: () => {
             this.nativeService.takePicture(cameraProperties.destinationType.FILEURI, cameraProperties.sourceType.CAMERA, cameraProperties.encoding.PNG, cameraProperties.imageSize, quality).then(img => {
               resolve(img);
@@ -96,7 +111,7 @@ export class IonicModelsService {
           }
         },
         {
-          text: 'Use Camera',
+          text: 'Load from Library',
           handler: () => {
             this.nativeService.takePicture(cameraProperties.destinationType.FILEURI, cameraProperties.sourceType.SAVEDPHOTOALBUM, cameraProperties.encoding.PNG, cameraProperties.imageSize, quality).then(img => {
               resolve(img);
