@@ -4,33 +4,86 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content padding>
-  <ion-card>
-    <ion-card-content>
-      <ion-grid>
-      <ion-row class="card-row"> <ion-col col-4>
-        <!-- <ion-icon *ngIf="employee.profile_image" class="card-image"></ion-icon>        
-        <img *ngIf="!employee.profile_image" src="employee-management/src/assets/icon/favicon.png" class="card-image" /> -->
-      </ion-col></ion-row>
-      <ion-row> <ion-col col-4>
-        <ion-item lines="none">
-          {{'ID'}}:{{employee.id}}
-        </ion-item>
+<ion-content ion-padding>
+  <form [formGroup]="empForm">
+    <ion-card>
+      <ion-card-content>
+        <ion-grid>
+          <ion-row class="card-row">
+            <ion-col col-12>
+          <!-- Take from Camera OR Gallery  -->
+          <ion-button button icon-left block outline (click)="takeImage()" ion-padding>
+            <ion-icon name="aperture" color="lightblue"></ion-icon>
+            {{'select or take photo'}}
+          </ion-button>
+          <ion-icon *ngIf="!employee.profile_image" class="card-image"></ion-icon>        
+          <img *ngIf="employee.profile_image" [src]="employee.profile_image.fileUrl" class="card-image" />
+        </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col col-12>
+              <ion-item lines="none">
+                {{'ID'}}
+                <ion-input   formControlName="id">
+                </ion-input>
+              </ion-item>
 
-      </ion-col></ion-row>
-      <ion-row> <ion-col col-4>
-        <ion-item lines="none">
-          {{'Salary'}}:{{employee.employee_salary}}
-        </ion-item>
 
-      </ion-col></ion-row>
-      <ion-row> <ion-col col-4>
-        <ion-item lines="none">
-          {{'Age'}}:{{employee.employee_age}}
-        </ion-item>
-
-      </ion-col></ion-row>
-    </ion-grid>
-    </ion-card-content>
-  </ion-card>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col col-12>
+              <ion-item lines="none">
+                {{'Name'}}
+                <ion-input type="text" formControlName="employee_name">
+                </ion-input>
+              </ion-item>
+              <!-- For Validation -->
+              <div class="ion-text-wrap"
+                  *ngIf="empForm.get('employee_name').hasError('required') && (empForm.get('employee_name').touched || submitAttempt)">
+                  <div class="error">
+                    {{'Employee name required'}}
+                  </div>
+                </div>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col col-12>
+              <ion-item lines="none">
+                {{'Salary'}}
+                <ion-input type="number" formControlName="employee_salary">
+                </ion-input>
+              </ion-item>
+              <!-- For Validation -->
+              <div class="ion-text-wrap"
+                  *ngIf="empForm.get('employee_salary').hasError('required') && (empForm.get('employee_salary').touched || submitAttempt)">
+                  <div class="error">
+                    {{'Employee salary required'}}
+                  </div>
+                </div>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col col-12>
+              <ion-item lines="none">
+                {{'Age'}}
+                <ion-input type="number" formControlName="employee_age">
+                </ion-input>
+              </ion-item>
+              <!-- For Validation -->
+              <div class="ion-text-wrap"
+                  *ngIf="empForm.get('employee_age').hasError('required') && (empForm.get('employee_age').touched || submitAttempt)">
+                  <div class="error">
+                    {{'Employee age required'}}
+                  </div>
+                </div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card-content>
+    </ion-card>
+  </form>
+  <div class="ion-padding" >
+    <ion-button ion-button [disabled]="!empForm.valid" (click)="saveEmp(empForm.value,empForm.valid)">{{'Save'}}</ion-button>
+  </div>
 </ion-content>

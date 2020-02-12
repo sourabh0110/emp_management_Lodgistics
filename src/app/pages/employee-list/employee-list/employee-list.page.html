@@ -12,18 +12,37 @@
 <ion-content>
   <ion-searchbar (ionInput)="searchEmp($event)"></ion-searchbar>
   <ion-list>
-    <ion-item *ngFor="let emp of employees;let i=index" >
-      <ion-icon name="desktop" slot="start"></ion-icon>
-      {{emp.employee_name}}
-      <ion-buttons slot="end">
-        <ion-button (click)="empDetail(emp)">
-          <ion-icon slot="icon-only" name="create"></ion-icon>
-        </ion-button>
-        <ion-button (click)="deleteEmp(i)">
-          <ion-icon slot="icon-only" name="remove-circle"></ion-icon>
-        </ion-button>
-      </ion-buttons>
-    </ion-item>
+    <ion-item lines="none"><i>Total employees: {{employees.length}}</i></ion-item>
+    <ion-card>
+      <ion-item *ngFor="let emp of employees;let i=index">
+        <ion-icon name="person" slot="start"></ion-icon>
+        <ion-card-subtitle>
+          <ion-row>
+            <ion-item lines="none">
+              <div>{{emp.employee_name}}</div>       
+            </ion-item>
+          </ion-row>
+          <ion-row>
+            <ion-item lines="none" >
+             <div>{{'Age: '}}</div> <div>{{emp.employee_age}}</div>
+            </ion-item>
+            
+          </ion-row>
+          
+        </ion-card-subtitle>
+
+
+        <ion-buttons slot="end">
+          <ion-button (click)="empDetail(emp,i)">
+            <ion-icon slot="icon-only" name="create"></ion-icon>
+          </ion-button>
+          <ion-button (click)="deleteEmp(i)">
+            <ion-icon slot="icon-only" name="remove-circle"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-item>
+    </ion-card>
+
   </ion-list>
   <!--
     <div *ngIf="selectedItem" padding>

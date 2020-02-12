@@ -2,6 +2,18 @@
     height: 50px;
     width: 50px;
 }
+
 .card-row {
-    text-align: center!important;
+    text-align: center !important;
+}
+
+.error {
+    margin-left: 10px;
+    font-size: 12px;
+    font-style: italic;
+    color: var(--ion-color-danger) !important;
+    white-space: normal;
+}
+ion-input {
+    --padding-start: 15px!important;
 }

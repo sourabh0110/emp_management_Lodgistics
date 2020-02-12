@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
-import { LoadingController, PopoverController, AlertController } from '@ionic/angular';
+import { LoadingController, ActionSheetController, AlertController, Platform } from '@ionic/angular';
+import { NativeServiceService } from '../native-service/native-service.service';
+import { AppConfig } from '../app-config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class IonicModelsService {
 
-  constructor(private loadingController:LoadingController,private alertController:AlertController) { }
+  constructor(private platform:Platform, private nativeService:NativeServiceService, private loadingController:LoadingController,private alertController:AlertController,private actionSheetController:ActionSheetController ) { }
 
   async showLoader(message){
     const loading = await this.loadingController.create({
@@ -49,6 +51,71 @@ export class IonicModelsService {
       await alert.present();
     })
    
+  }
+  showAlert(title: string, msg: string, buttonTitle: any) {
+    return new Promise(async (resolve, reject) => {
+      const alert = await this.alertController.create({
+        header: title,
+        subHeader: msg,
+       //  enableBackdropDismiss: false,
+        buttons: [
+          {
+            text: (buttonTitle),
+            handler: () => {
+              resolve("");
+            }
+          }
+        ]
+      });
+      alert.present();
+    })
+  }
+
+   selectImage() {
+    return new Promise(async(resolve,reject)=>{
+      let cameraProperties = AppConfig.cameraProperties;
+      let quality;
+      if (this.platform.is("ios")) {
+        quality = cameraProperties.iosquality;
+      }
+      else {
+        quality = cameraProperties.androidquality;
+      }
+      const actionSheet = await this.actionSheetController.create({
+        header: "Select Image source",
+        buttons: [{
+          text: 'Load from Library',
+          handler: () => {
+            this.nativeService.takePicture(cameraProperties.destinationType.FILEURI, cameraProperties.sourceType.CAMERA, cameraProperties.encoding.PNG, cameraProperties.imageSize, quality).then(img => {
+              resolve(img);
+             }, err => {  
+               console.log(err);
+               reject(err);
+              // this.isUnloading = true;
+             })
+          }
+        },
+        {
+          text: 'Use Camera',
+          handler: () => {
+            this.nativeService.takePicture(cameraProperties.destinationType.FILEURI, cameraProperties.sourceType.SAVEDPHOTOALBUM, cameraProperties.encoding.PNG, cameraProperties.imageSize, quality).then(img => {
+              resolve(img);
+             }, err => {  
+               console.log(err);
+               reject(err);
+              // this.isUnloading = true;
+             })
+          }
+        },
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        }
+        ]
+      });
+      await actionSheet.present();
+    })
+    
   }
 
 }
