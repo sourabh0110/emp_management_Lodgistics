@@ -4,7 +4,6 @@ import { IonicModelsService } from "src/app/services/ionic-models/ionic-models.s
 import { Router, NavigationExtras } from "@angular/router";
 import { OfflineService } from 'src/app/services/offline-service/offline.service';
 import { NativeServiceService } from 'src/app/services/native-service/native-service.service';
-import { AppConfig } from 'src/app/services/app-config';
 
 @Component({
   selector: "app-employee-list",
@@ -12,10 +11,15 @@ import { AppConfig } from 'src/app/services/app-config';
   styleUrls: ["./employee-list.page.scss"]
 })
 export class EmployeeListPage implements OnInit {
+  /**
+   * Employees 
+   */
   employees: any = [];
+  /**
+   * Replicate original values for searchBox
+   */
   employeeList: any = [];
   constructor(
-    private nativeService:NativeServiceService,
     private offlineService: OfflineService,
     private router: Router,
     private restApiService: HttpService,
@@ -23,8 +27,11 @@ export class EmployeeListPage implements OnInit {
   ) {
     
    }
+   /**
+    * Life Cycle method
+    */
    ionViewDidEnter(){
-    console.log('Constructor');
+    console.log('ionViewDidEnter');
     this.offlineService.getValues('emp').then(res => {
       if (res) {
         this.employees = this.employeeList = res;
@@ -42,10 +49,12 @@ export class EmployeeListPage implements OnInit {
 
   ngOnInit() {
   }
-
+  /**
+   * Getting list of employees
+   */
   async getEmpList() {
     this.ionicModels.showLoader("Loading..");
-    await this.restApiService.getClassroom().subscribe(
+    await this.restApiService.getEmp().subscribe(
       res => {
         console.log(res);
         this.employees = this.employeeList = res.data;
@@ -58,7 +67,11 @@ export class EmployeeListPage implements OnInit {
       }
     );
   }
-
+  /**
+   * 
+   * @param employeeDetail getting employee
+   * @param index getting employee index from array
+   */
   empDetail(employeeDetail,index) {
     let navigationExtras: NavigationExtras = {
       state: {
@@ -68,6 +81,10 @@ export class EmployeeListPage implements OnInit {
     };
     this.router.navigate(["employee-detail"], navigationExtras);
   }
+  /**
+   * Delete employee 
+   * @param index Delete employee from specific index
+   */
   deleteEmp(index) {
     //delete this.employees[index];
     this.ionicModels.presentAlertConfirm().then(
@@ -80,6 +97,11 @@ export class EmployeeListPage implements OnInit {
       }
     );
   }
+
+  /**
+   * To search from search box
+   * @param element Element value to be searched
+   */
   searchEmp(element) {
 
     this.onCancel();
@@ -88,12 +110,14 @@ export class EmployeeListPage implements OnInit {
       return;
     }
     this.employees = this.employees.filter(res => {
-      return res.employee_name.toLowerCase().includes(text);
+      return res.employee_name.toLowerCase().includes(text.toLowerCase());
     })
     console.log(this.employees);
   }
+  /**
+   * To reinitialise the the employee list
+   */
   onCancel() {
     this.employees = this.employeeList;
-    //this.questionsArray=this.sampleData.faqs; //Reset questions Array from original Array
   }
 }

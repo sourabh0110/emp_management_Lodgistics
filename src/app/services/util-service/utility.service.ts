@@ -6,7 +6,14 @@ import { Injectable } from '@angular/core';
 export class UtilityService {
 
   constructor() { }
-
+  /**
+   * To create thumbnail
+   * @param imageUrl Image url
+   * @param height Height
+   * @param width Width
+   * @param quality Quality
+   * @param mime_type Mime type (Image)
+   */
   makeThumbnail(imageUrl: string, height: number, width: number, quality: number, mime_type: any): Promise<any> {
     let natW = width;//image.naturalWidth;
     let natH = height;//image.naturalHeight;
@@ -31,6 +38,10 @@ export class UtilityService {
 
   }
 
+  /**
+   * Convert Data url to blob
+   * @param dataurl data url to convert
+   */
   dataURLtoBlob(dataurl) {
     var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
       bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);

@@ -7,44 +7,58 @@
 <ion-content ion-padding>
   <form [formGroup]="empForm">
     <ion-card>
-      <ion-card-content>
-        <ion-grid>
-          <ion-row class="card-row">
-            <ion-col col-12>
+      <ion-row class="card-row">
+        <ion-col col-12>
           <!-- Take from Camera OR Gallery  -->
-          <ion-button button icon-left block outline (click)="takeImage()" ion-padding>
+          <ion-button
+            button
+            icon-left
+            outline
+            (click)="takeImage()"
+            ion-padding
+          >
             <ion-icon name="aperture" color="lightblue"></ion-icon>
             {{'select or take photo'}}
           </ion-button>
-          <ion-icon *ngIf="!employee.profile_image" class="card-image"></ion-icon>        
-          <img *ngIf="employee.profile_image" [src]="employee.profile_image.fileUrl" class="card-image" />
+          <ion-icon
+            *ngIf="!employee.profile_image"
+            class="card-image"
+          ></ion-icon>
+          <img
+            *ngIf="employee.profile_image"
+            [src]="employee.profile_image.fileUrl"
+            class="card-image"
+          />
         </ion-col>
-          </ion-row>
+      </ion-row>
+    </ion-card>
+    <ion-card>
+      <ion-card-content>
+        <ion-grid>
           <ion-row>
             <ion-col col-12>
               <ion-item lines="none">
                 {{'ID'}}
-                <ion-input   formControlName="id">
-                </ion-input>
+                <ion-input formControlName="id"> </ion-input>
               </ion-item>
-
-
             </ion-col>
           </ion-row>
           <ion-row>
             <ion-col col-12>
               <ion-item lines="none">
                 {{'Name'}}
-                <ion-input type="text" formControlName="employee_name">
+                <ion-input required type="text" formControlName="employee_name">
                 </ion-input>
               </ion-item>
               <!-- For Validation -->
-              <div class="ion-text-wrap"
-                  *ngIf="empForm.get('employee_name').hasError('required') && (empForm.get('employee_name').touched || submitAttempt)">
-                  <div class="error">
-                    {{'Employee name required'}}
-                  </div>
+              <div
+                class="ion-text-wrap"
+                *ngIf="empForm.get('employee_name').hasError('required') && (empForm.get('employee_name').touched || submitAttempt)"
+              >
+                <div class="error">
+                  {{'Employee name required'}}
                 </div>
+              </div>
             </ion-col>
           </ion-row>
           <ion-row>
@@ -55,12 +69,14 @@
                 </ion-input>
               </ion-item>
               <!-- For Validation -->
-              <div class="ion-text-wrap"
-                  *ngIf="empForm.get('employee_salary').hasError('required') && (empForm.get('employee_salary').touched || submitAttempt)">
-                  <div class="error">
-                    {{'Employee salary required'}}
-                  </div>
+              <div
+                class="ion-text-wrap"
+                *ngIf="empForm.get('employee_salary').hasError('required') && (empForm.get('employee_salary').touched || submitAttempt)"
+              >
+                <div class="error">
+                  {{'Employee salary required'}}
                 </div>
+              </div>
             </ion-col>
           </ion-row>
           <ion-row>
@@ -71,19 +87,37 @@
                 </ion-input>
               </ion-item>
               <!-- For Validation -->
-              <div class="ion-text-wrap"
-                  *ngIf="empForm.get('employee_age').hasError('required') && (empForm.get('employee_age').touched || submitAttempt)">
-                  <div class="error">
-                    {{'Employee age required'}}
-                  </div>
+              <div
+                class="ion-text-wrap"
+                *ngIf="empForm.get('employee_age').hasError('required') && (empForm.get('employee_age').touched || submitAttempt)"
+              >
+                <div class="error">
+                  {{'Employee age required'}}
                 </div>
+              </div>
             </ion-col>
           </ion-row>
         </ion-grid>
       </ion-card-content>
     </ion-card>
   </form>
-  <div class="ion-padding" >
-    <ion-button ion-button [disabled]="!empForm.valid" (click)="saveEmp(empForm.value,empForm.valid)">{{'Save'}}</ion-button>
-  </div>
+  <ion-row>
+    <div class="ion-padding">
+      <ion-button
+        ion-button
+        [disabled]="!empForm.valid"
+        (click)="saveEmp(empForm.value,empForm.valid)"
+        >{{'Save'}}</ion-button
+      >
+    </div>
+
+    <div class="ion-padding">
+      <ion-button
+        ion-button
+        [disabled]="!empForm.valid"
+        (click)="saveEmp(empForm.value,empForm.valid)"
+        >{{'Save'}}</ion-button
+      >
+    </div>
+  </ion-row>
 </ion-content>

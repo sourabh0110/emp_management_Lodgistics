@@ -8,8 +8,6 @@ import { AppConfig } from 'src/app/services/app-config';
 import { Platform, NavController } from '@ionic/angular';
 import { NativeServiceService } from 'src/app/services/native-service/native-service.service';
 import { UtilityService } from 'src/app/services/util-service/utility.service';
-import { Camera } from '@ionic-native/camera/ngx';
-import { Base64ToGallery } from '@ionic-native/base64-to-gallery/ngx';
 import { OfflineService } from 'src/app/services/offline-service/offline.service';
 
 
@@ -24,9 +22,21 @@ export class EmployeeDetailPage implements OnInit {
   /**
    * Form to manage document
    */
+  /**
+   * Employee form 
+   */
   empForm: any;
+  /**
+   * Check for validation
+   */
   submitAttempt: boolean;
+  /**
+   * Index 
+   */
   index:any;
+  /**
+   * Employee list
+   */
   empList:any=[];
   constructor(private navCtrl:NavController, private offlineService:OfflineService, private webview: WebView, private util: UtilityService, private nativeService: NativeServiceService, private platform: Platform, private formbuilder: FormBuilder, private ionicModels: IonicModelsService, private route: ActivatedRoute,
     public router: Router) {
@@ -47,6 +57,9 @@ export class EmployeeDetailPage implements OnInit {
       this.empList = res;
     });
   }
+  /**
+   * Initialise the form
+   */
   initForm() {
     this.empForm = this.formbuilder.group({
       employee_name: [this.employee.employee_name || "", Validators.compose([Validators.required])],
@@ -56,7 +69,11 @@ export class EmployeeDetailPage implements OnInit {
     })
   }
 
-
+  /**
+   * To save form
+   * @param empForm Form to save
+   * @param isValid Check validation
+   */
   saveEmp(empForm, isValid) {
     console.log(empForm);
     let error = this.findInvalidControls();
@@ -76,6 +93,10 @@ export class EmployeeDetailPage implements OnInit {
 
     }
   }
+  /**
+   * To update values
+   * @param empForm update employee
+   */
   updateEmp(empForm){
     empForm.id=this.employee.id;
     this.empList[this.index]=empForm;
@@ -83,6 +104,9 @@ export class EmployeeDetailPage implements OnInit {
     this.offlineService.setValues('emp',this.empList);
     this.navCtrl.navigateRoot('') ;
   }
+  /**
+   * Find if there are any invalid controls
+   */
   findInvalidControls() {
     const invalid = [];
     const controls = this.empForm.controls;
@@ -93,6 +117,9 @@ export class EmployeeDetailPage implements OnInit {
     }
     return invalid;
   }
+  /**
+   * Take Image Controller
+   */
   takeImage() {
 
     this.ionicModels.selectImage().then((res: any) => {
@@ -101,6 +128,11 @@ export class EmployeeDetailPage implements OnInit {
     });
 
   }
+  /**
+   * To create local file image url and thumbnail 
+   * @param img img returned
+   * @param copy copy or move
+   */
   afterImageCapture(img, copy) {
     let itemSrc;
     if (this.platform.is('ios')) {
@@ -123,7 +155,7 @@ export class EmployeeDetailPage implements OnInit {
     if (copy) {
       this.nativeService.copyFile(oldFilePath, AppConfig.directory.image, fileName, newFileName).then((imgUrl) => {
         console.log("afterImageCapture", imgUrl)
-        this.createThumbnail(imgUrl, newFileName);
+        this.createThumbnail(imgUrl);
       }, err => {
         console.log(err);
        
@@ -155,7 +187,11 @@ export class EmployeeDetailPage implements OnInit {
       });
     }
   }
-
+  /**
+   * To store image in employee.profile_image
+   * @param imgUrl Image
+   * @param thumbnailUrl Thumbail 
+   */
   onImageStore(imgUrl, thumbnailUrl) {
     console.log("onImageStore", imgUrl, thumbnailUrl);
     let image = {
@@ -174,12 +210,19 @@ export class EmployeeDetailPage implements OnInit {
     // this.ims.hidePreloader();
     // this.isUnloading = true;
   }
-
+  /**
+   * To set offline data
+   * @param employee employee value to update
+   */
   setImageOffline(employee){
     this.empList[this.index]=employee;
     this.offlineService.setValues('emp',this.empList)
   }
-  createThumbnail(imgUrl, newFileName) {
+  /**
+   * To create thumbnail
+   * @param imgUrl image url
+   */
+  createThumbnail(imgUrl) {
       var cdvUrl;
       let thumbName = "thumb-" +(new Date().getTime()) + ".png";
       let thumbPro = AppConfig.imageThumbnail;
@@ -197,6 +240,7 @@ export class EmployeeDetailPage implements OnInit {
       if (this.platform.is('ios')) {
         imgUrl = imgUrl.replace(/^file:\/\//, '');
       }
+      //Make a thumbnail of the image
       this.util.makeThumbnail(imgUrl, thumbPro.height, thumbPro.width, thumbPro.quality, mime_type).then((blob) => {
         console.log(blob);
         this.nativeService.writeBlobFile(AppConfig.directory.image, thumbName, blob).then((url) => {
