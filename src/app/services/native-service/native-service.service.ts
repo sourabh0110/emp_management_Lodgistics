@@ -276,5 +276,9 @@ export class NativeServiceService {
         );
       }
     });
+<<<<<<< HEAD
+=======
+  }
+>>>>>>> 19ae7552e6373f097f8c625da3da4f379a9013a0
 }
 }
