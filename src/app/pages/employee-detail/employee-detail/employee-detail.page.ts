@@ -1,4 +1,4 @@
-declare var window:any;
+declare var window: any;
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -18,6 +18,17 @@ import { OfflineService } from 'src/app/services/offline-service/offline.service
   styleUrls: ['./employee-detail.page.scss'],
 })
 export class EmployeeDetailPage implements OnInit {
+  /**
+   * To check if image exists
+   */
+  hasImage: boolean;
+  /**
+   * Checking Image
+   */
+  image: any;
+  /**
+   * Employee object
+   */
   employee: any = {};
   /**
    * Form to manage document
@@ -33,12 +44,12 @@ export class EmployeeDetailPage implements OnInit {
   /**
    * Index 
    */
-  index:any;
+  index: any;
   /**
    * Employee list
    */
-  empList:any=[];
-  constructor(private navCtrl:NavController, private offlineService:OfflineService, private webview: WebView, private util: UtilityService, private nativeService: NativeServiceService, private platform: Platform, private formbuilder: FormBuilder, private ionicModels: IonicModelsService, private route: ActivatedRoute,
+  empList: any = [];
+  constructor(private navCtrl: NavController, private offlineService: OfflineService, private webview: WebView, private util: UtilityService, private nativeService: NativeServiceService, private platform: Platform, private formbuilder: FormBuilder, private ionicModels: IonicModelsService, private route: ActivatedRoute,
     public router: Router) {
     //Calling the function to set data
     this.route.queryParams.subscribe(params => {
@@ -53,7 +64,7 @@ export class EmployeeDetailPage implements OnInit {
   }
 
   ngOnInit() {
-     this.offlineService.getValues('emp').then(res=>{
+    this.offlineService.getValues('emp').then(res => {
       this.empList = res;
     });
   }
@@ -87,22 +98,27 @@ export class EmployeeDetailPage implements OnInit {
       this.ionicModels.showLoader('Saving Form..');
       //Update offline
       this.updateEmp(empForm);
-      //Maybe calling image service
       this.ionicModels.hideLoader();
-
-
     }
   }
   /**
    * To update values
    * @param empForm update employee
    */
-  updateEmp(empForm){
-    empForm.id=this.employee.id;
-    this.empList[this.index]=empForm;
-    console.log(this.empList);
-    this.offlineService.setValues('emp',this.empList);
-    this.navCtrl.navigateRoot('') ;
+  updateEmp(empForm) {
+    empForm.id = this.employee.id;
+
+    if (this.image && this.hasImage) {
+      this.empList[this.index] = empForm;
+      this.empList[this.index].profile_image = this.image;
+      this.offlineService.setValues('emp', this.empList);
+      console.log(this.empList);
+    }
+    else {
+      this.empList[this.index] = empForm;
+      this.offlineService.setValues('emp', this.empList);
+    }
+    this.navCtrl.navigateRoot('');
   }
   /**
    * Find if there are any invalid controls
@@ -124,6 +140,7 @@ export class EmployeeDetailPage implements OnInit {
 
     this.ionicModels.selectImage().then((res: any) => {
       console.log(res);
+      this.ionicModels.showLoader('uploading..');
       this.afterImageCapture(res, false);
     });
 
@@ -158,32 +175,33 @@ export class EmployeeDetailPage implements OnInit {
         this.createThumbnail(imgUrl);
       }, err => {
         console.log(err);
-       
+
       });
     }
     else {
-      this.nativeService.moveFile(oldFilePath, AppConfig.directory.image, fileName, newFileName).then((imgUrl:any) => {
+      this.nativeService.moveFile(oldFilePath, AppConfig.directory.image, fileName, newFileName).then((imgUrl: any) => {
         console.log("afterImageCapture move", imgUrl);
-      //  this.createThumbnail(imgUrl, newFileName);
         let thumbPro = AppConfig.imageThumbnail;
-        let thumbName = "thumb-" +(new Date().getTime()) + ".png";
+        let thumbName = "thumb-" + (new Date().getTime()) + ".png";
         let mime_type = AppConfig.mediaFormats.imagePng.contentType;
-        imgUrl=this.webview.convertFileSrc(imgUrl);
+        imgUrl = this.webview.convertFileSrc(imgUrl);
         this.util.makeThumbnail(imgUrl, thumbPro.height, thumbPro.width, thumbPro.quality, mime_type).then((blob) => {
           console.log(blob);
           this.nativeService.writeBlobFile(AppConfig.directory.image, thumbName, blob).then((url) => {
             this.onImageStore(imgUrl, url);
           }, err => {
             console.log(err);
-          
+            this.ionicModels.hideLoader();
           })
         }, err => {
+          this.ionicModels.hideLoader();
           console.log(err);
-         
+
         });
       }, err => {
+        this.ionicModels.hideLoader();
         console.log(err);
-     
+
       });
     }
   }
@@ -198,61 +216,75 @@ export class EmployeeDetailPage implements OnInit {
       "fileUrl": imgUrl,
       "thumbnailUrl": thumbnailUrl,
     }
-    this.employee.profile_image=image;
+    this.employee.profile_image = image;
     console.log(this.employee);
 
     this.setImageOffline(this.employee);
-
+    this.hasImage = true;
+    this.image = image;
     if (this.platform.is('ios')) {
       image.thumbnailUrl = window.Ionic.normalizeURL(image.thumbnailUrl);
       console.log(image);
     }
-    // this.ims.hidePreloader();
-    // this.isUnloading = true;
+    this.ionicModels.hideLoader();
   }
   /**
    * To set offline data
    * @param employee employee value to update
    */
-  setImageOffline(employee){
-    this.empList[this.index]=employee;
-    this.offlineService.setValues('emp',this.empList)
+  setImageOffline(employee) {
+    this.empList[this.index] = employee;
+    this.offlineService.setValues('emp', this.empList)
   }
   /**
    * To create thumbnail
    * @param imgUrl image url
    */
   createThumbnail(imgUrl) {
-      var cdvUrl;
-      let thumbName = "thumb-" +(new Date().getTime()) + ".png";
-      let thumbPro = AppConfig.imageThumbnail;
-      let mime_type = AppConfig.mediaFormats.imagePng.contentType;
-      window.Ionic.WebView.convertFileSrc(imgUrl, function success(fileEntry) {
-        console.log("got file: " + fileEntry.fullPath);
-        cdvUrl = fileEntry.toInternalURL();
-        imgUrl = cdvUrl;
-        console.log('cdvfile URI: ' + fileEntry.toInternalURL());
-        //imgUrl=window.Ionic.normalizeURL(imgUrl);
-      }, err => {
-        console.log(err);
-      });
-  
-      if (this.platform.is('ios')) {
-        imgUrl = imgUrl.replace(/^file:\/\//, '');
-      }
-      //Make a thumbnail of the image
-      this.util.makeThumbnail(imgUrl, thumbPro.height, thumbPro.width, thumbPro.quality, mime_type).then((blob) => {
-        console.log(blob);
-        this.nativeService.writeBlobFile(AppConfig.directory.image, thumbName, blob).then((url) => {
-          this.onImageStore(imgUrl, url);
-        }, err => {
-          console.log(err);
-        
-        })
-      }, err => {
-        console.log(err);
-       
-      });
-  }
+    var cdvUrl;
+    let thumbName = "thumb-" + (new Date().getTime()) + ".png";
+    let thumbPro = AppConfig.imageThumbnail;
+    let mime_type = AppConfig.mediaFormats.imagePng.contentType;
+    window.Ionic.WebView.convertFileSrc(imgUrl, function success(fileEntry) {
+      console.log("got file: " + fileEntry.fullPath);
+      cdvUrl = fileEntry.toInternalURL();
+      imgUrl = cdvUrl;
+      console.log('cdvfile URI: ' + fileEntry.toInternalURL());
+    }, err => {
+      console.log(err);
+    });
 
+    if (this.platform.is('ios')) {
+      imgUrl = imgUrl.replace(/^file:\/\//, '');
+    }
+    //Make a thumbnail of the image
+    this.util.makeThumbnail(imgUrl, thumbPro.height, thumbPro.width, thumbPro.quality, mime_type).then((blob) => {
+      console.log(blob);
+      this.nativeService.writeBlobFile(AppConfig.directory.image, thumbName, blob).then((url) => {
+        this.onImageStore(imgUrl, url);
+      }, err => {
+        console.log(err);
+
+      })
+    }, err => {
+      console.log(err);
+
+    });
+  }
+   /**
+   * Reset the form
+   */
+  resetForm() {
+    this.empForm = this.formbuilder.group({
+      employee_name: ["", Validators.compose([Validators.required])],
+      employee_salary: ["", Validators.compose([Validators.required])],
+      employee_age: ["", Validators.compose([Validators.required])],
+      id: new FormControl({ value: this.employee.id || '', disabled: true }, Validators.required)
+    })
+
+    this.image={};
+    this.hasImage=false;
+    this.employee.profile_image={};
+    
+  }
 }

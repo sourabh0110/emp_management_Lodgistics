@@ -44,7 +44,7 @@ export class NativeServiceService {
   ): Promise<any> {
     let options: any = {
       //Save photo to gallery
-      //saveToPhotoAlbum: true,
+      saveToPhotoAlbum: true,
       //destinationType 0:DATA_URL 1: Return image as base64-encoded string 2. Return image file URI
       destinationType: destinationType,
       //sourceType PHOTOLIBRARY : 0, CAMERA : 1, SAVEDPHOTOALBUM : 2
@@ -276,9 +276,5 @@ export class NativeServiceService {
         );
       }
     });
-<<<<<<< HEAD
-=======
-  }
->>>>>>> 19ae7552e6373f097f8c625da3da4f379a9013a0
 }
 }

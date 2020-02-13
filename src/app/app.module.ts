@@ -22,7 +22,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FilePath } from '@ionic-native/file-path/ngx';
 import { Camera } from '@ionic-native/camera/ngx';
 import { File } from '@ionic-native/file/ngx';
-import { Base64ToGallery } from '@ionic-native/base64-to-gallery/ngx';
 import { WebView } from '@ionic-native/ionic-webview/ngx';
 
 @NgModule({
@@ -33,7 +32,7 @@ import { WebView } from '@ionic-native/ionic-webview/ngx';
   IonicStorageModule.forRoot()
   ],
   providers: [
-    Camera,FilePath,File,Base64ToGallery,WebView,
+    Camera,FilePath,File,WebView,
     StatusBar,
     SplashScreen,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }

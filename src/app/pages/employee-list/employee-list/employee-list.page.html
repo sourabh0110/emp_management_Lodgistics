@@ -1,10 +1,10 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar >
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-title>
-      Employees
+      {{'Employees'}}
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -12,10 +12,11 @@
 <ion-content>
   <ion-searchbar (ionInput)="searchEmp($event)"></ion-searchbar>
   <ion-list>
-    <ion-item lines="none"><i>Total employees: {{employees.length}}</i></ion-item>
+    <ion-item lines="none"><i>{{'Total employees:'}} {{employees.length}}</i></ion-item>
     <ion-card>
       <ion-item *ngFor="let emp of employees;let i=index">
-        <ion-icon name="person" slot="start"></ion-icon>
+       <div><ion-icon name="person" slot="start" *ngIf="!emp.profile_image"></ion-icon></div> 
+        <div *ngIf="emp.profile_image"> <img [src]="emp.profile_image.fileUrl" class="list-image" /> </div>
         <ion-card-subtitle>
           <ion-row>
             <ion-item lines="none">
@@ -44,9 +45,4 @@
     </ion-card>
 
   </ion-list>
-  <!--
-    <div *ngIf="selectedItem" padding>
-      You navigated here from <b>{{selectedItem.title }}</b>
-    </div>
-  -->
 </ion-content>

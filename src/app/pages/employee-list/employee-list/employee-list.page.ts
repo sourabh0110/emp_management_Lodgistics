@@ -4,6 +4,8 @@ import { IonicModelsService } from "src/app/services/ionic-models/ionic-models.s
 import { Router, NavigationExtras } from "@angular/router";
 import { OfflineService } from 'src/app/services/offline-service/offline.service';
 import { NativeServiceService } from 'src/app/services/native-service/native-service.service';
+import { AppConfig } from 'src/app/services/app-config';
+import { Platform } from '@ionic/angular';
 
 @Component({
   selector: "app-employee-list",
@@ -19,7 +21,13 @@ export class EmployeeListPage implements OnInit {
    * Replicate original values for searchBox
    */
   employeeList: any = [];
+  /**
+   * Subscribe to back button
+   */
+  subscription:any;
   constructor(
+    private platform:Platform,
+    private nativeService:NativeServiceService,
     private offlineService: OfflineService,
     private router: Router,
     private restApiService: HttpService,
@@ -31,6 +39,9 @@ export class EmployeeListPage implements OnInit {
     * Life Cycle method
     */
    ionViewDidEnter(){
+    this.subscription = this.platform.backButton.subscribe(()=>{
+      navigator['app'].exitApp();
+  });
     console.log('ionViewDidEnter');
     this.offlineService.getValues('emp').then(res => {
       if (res) {
@@ -46,8 +57,19 @@ export class EmployeeListPage implements OnInit {
       }
     )
    }
-
+   /**
+    * Life cycle to unsubscribe
+    */
+   ionViewWillLeave(){
+    this.subscription.unsubscribe();
+}
   ngOnInit() {
+    let dirPath = AppConfig.directory.image;
+    this.nativeService.createDirectory(dirPath).then(success => {
+      console.log(success);
+    }, err => {
+      console.log(err);
+    });
   }
   /**
    * Getting list of employees
@@ -120,4 +142,6 @@ export class EmployeeListPage implements OnInit {
   onCancel() {
     this.employees = this.employeeList;
   }
+
+  
 }
